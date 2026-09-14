@@ -1,9 +1,10 @@
 use crate::config::AppInfo;
 use std::fs;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 const RECENT_APP_LIMIT: usize = 128;
-const APP_DIRECTORIES: [&str; 2] = ["/Applications", "/System/Applications"];
+const SYSTEM_APP_DIRECTORIES: [&str; 2] = ["/Applications", "/System/Applications"];
 const FINDER_OUTSIDE_APP_DIRECTORIES: &str = "/System/Library/CoreServices/Finder.app";
 
 fn promote_recent_path(paths: &mut Vec<String>, path: &str) {
@@ -109,7 +110,15 @@ pub fn register_activation_observer() {
     recent_apps::register_observer();
 }
 
-fn collect_apps_from_dir(dir: &str, apps: &mut Vec<AppInfo>, recurse: bool) {
+fn installed_app_directories(home: &str) -> Vec<PathBuf> {
+    SYSTEM_APP_DIRECTORIES
+        .iter()
+        .map(PathBuf::from)
+        .chain(std::iter::once(Path::new(home).join("Applications")))
+        .collect()
+}
+
+fn collect_apps_from_dir(dir: &Path, apps: &mut Vec<AppInfo>, recurse: bool) {
     let Ok(entries) = fs::read_dir(dir) else {
         return;
     };
@@ -124,15 +133,15 @@ fn collect_apps_from_dir(dir: &str, apps: &mut Vec<AppInfo>, recurse: bool) {
                 path: path.to_string_lossy().to_string(),
             });
         } else if recurse && path.is_dir() && path.extension().is_none() {
-            collect_apps_from_dir(&path.to_string_lossy(), apps, false);
+            collect_apps_from_dir(&path, apps, false);
         }
     }
 }
 
 pub fn list_installed_apps() -> Vec<AppInfo> {
     let mut apps = Vec::new();
-    for dir in APP_DIRECTORIES {
-        collect_apps_from_dir(dir, &mut apps, true);
+    for dir in installed_app_directories(&home_dir()) {
+        collect_apps_from_dir(&dir, &mut apps, true);
     }
     if std::path::Path::new(FINDER_OUTSIDE_APP_DIRECTORIES).exists() {
         apps.push(AppInfo {
@@ -309,7 +318,10 @@ fn shell_quote(s: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{promote_recent_path, sort_by_recency, AppInfo, RECENT_APP_LIMIT};
+    use super::{
+        installed_app_directories, promote_recent_path, sort_by_recency, AppInfo, RECENT_APP_LIMIT,
+    };
+    use std::path::PathBuf;
 
     fn app(name: &str) -> AppInfo {
         AppInfo {
@@ -337,5 +349,17 @@ mod tests {
         sort_by_recency(&mut apps, &recent);
         let names: Vec<_> = apps.iter().map(|app| app.name.as_str()).collect();
         assert_eq!(names, ["Gamma", "Beta", "Alpha"]);
+    }
+
+    #[test]
+    fn installed_app_directories_include_the_current_users_applications_directory() {
+        assert_eq!(
+            installed_app_directories("/Users/example"),
+            [
+                PathBuf::from("/Applications"),
+                PathBuf::from("/System/Applications"),
+                PathBuf::from("/Users/example/Applications"),
+            ]
+        );
     }
 }
