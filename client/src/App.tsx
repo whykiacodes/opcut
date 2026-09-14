@@ -170,7 +170,6 @@ function App() {
           {
             kind: "shell",
             id: "shell-hint",
-            badge: "!",
             title: "Run a shell command",
             subtitle: `type a command · ${cwdLabel}`,
             onActivate: () => {},
@@ -181,7 +180,6 @@ function App() {
         {
           kind: "shell",
           id: "shell-run",
-          badge: "!",
           title: parsed.command,
           subtitle: `run in terminal · ${cwdLabel}${parsed.cwdSource === "default" ? " (default)" : ""}`,
           onActivate: () =>
@@ -197,7 +195,6 @@ function App() {
           {
             kind: "command" as const,
             id: "cmd-cwd",
-            badge: "›",
             title: pathArg
               ? `Set shell folder to ${pathArg}`
               : `Shell folder · ${shellCwd.replace(home, "~")}`,
@@ -282,7 +279,6 @@ function App() {
         .map((c) => ({
           kind: "command" as const,
           id: `cmd-${c.id}`,
-          badge: "›",
           title: c.title,
           subtitle: c.subtitle,
           onActivate: c.run,

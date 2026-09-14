@@ -1,5 +1,5 @@
 import type { AppConfig } from "../types";
-import { AppGlyph } from "./Glyphs";
+import { IconAppWindow } from "@tabler/icons-react";
 
 interface SlotItemProps {
   index: number;
@@ -19,7 +19,7 @@ export default function SlotItem({ index, app, iconDataUri, onClick }: SlotItemP
         {iconDataUri ? (
           <img className="slot-icon" src={iconDataUri} alt="" draggable={false} />
         ) : (
-          <AppGlyph />
+          <IconAppWindow size={14} strokeWidth={1.75} aria-hidden />
         )}
       </span>
       <span className="slot-app-name">{app ? app.name : "Assign app..."}</span>
