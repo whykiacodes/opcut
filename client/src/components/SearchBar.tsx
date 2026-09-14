@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { SearchGlyph, ShellGlyph } from "./Glyphs";
+import { IconDots, IconSearch, IconTerminal2 } from "@tabler/icons-react";
 
 interface SearchBarProps {
   value: string;
@@ -15,7 +15,11 @@ const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
     return (
       <div className="search-bar" data-shell={shellActive ? "true" : "false"}>
         <span className="search-glyph" aria-hidden>
-          {shellActive ? <ShellGlyph /> : <SearchGlyph />}
+          {shellActive ? (
+            <IconTerminal2 size={18} strokeWidth={1.75} />
+          ) : (
+            <IconSearch size={18} strokeWidth={1.75} />
+          )}
         </span>
         <input
           ref={ref}
@@ -38,7 +42,7 @@ const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
           tabIndex={-1}
           onClick={onToggleMenu}
         >
-          ⌥
+          <IconDots size={16} strokeWidth={2} aria-hidden />
         </button>
       </div>
     );

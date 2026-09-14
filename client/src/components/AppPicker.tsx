@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { AppInfo } from "../types";
 import { joinIconPaths, splitIconPaths } from "../lib/iconPaths";
-import { AppGlyph } from "./Glyphs";
+import { IconAppWindow } from "@tabler/icons-react";
 
 interface AppPickerProps {
   apps: AppInfo[];
@@ -85,7 +85,7 @@ export default function AppPicker({
                     draggable={false}
                   />
                 ) : (
-                  <AppGlyph />
+                  <IconAppWindow size={14} strokeWidth={1.75} aria-hidden />
                 )}
               </span>
               <span className="app-picker-name">{app.name}</span>
