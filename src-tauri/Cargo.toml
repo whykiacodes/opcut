@@ -22,5 +22,5 @@ base64 = "0.22"
 block2 = "0.5"
 objc2 = "0.5"
 objc2-app-kit = { version = "0.2", features = ["NSRunningApplication", "NSWorkspace", "NSWindow", "NSResponder", "NSImage", "NSImageRep", "NSBitmapImageRep", "NSGraphics", "NSGraphicsContext"] }
-objc2-foundation = { version = "0.2", features = ["block2", "NSOperation"] }
+objc2-foundation = { version = "0.2", features = ["block2", "NSBundle", "NSOperation"] }
 tauri-nspanel = { git = "https://github.com/ahkohd/tauri-nspanel", branch = "v2" }

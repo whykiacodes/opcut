@@ -244,16 +244,71 @@ pub fn terminate_running_app(_path: &str) -> Result<(), String> {
     Err("Quitting running apps is only supported on macOS".to_string())
 }
 
-pub fn launch_or_focus_app(path: &str) -> Result<(), String> {
-    #[cfg(target_os = "macos")]
-    recent_apps::record_path(path);
+#[cfg(target_os = "macos")]
+mod running_bundle {
+    use objc2::rc::autoreleasepool;
+    use objc2_app_kit::{NSApplicationActivationPolicy, NSRunningApplication};
+    use objc2_foundation::{NSBundle, NSString};
 
+    pub(super) struct RunningBundle {
+        pub(super) identifier: String,
+        pub(super) running_path: String,
+    }
+
+    fn bundle_identifier_at(path: &str) -> Option<String> {
+        let bundle = unsafe { NSBundle::bundleWithPath(&NSString::from_str(path)) }?;
+        let identifier = unsafe { bundle.bundleIdentifier() }?;
+        Some(identifier.to_string())
+    }
+
+    pub(super) fn find_running_instance_of(path: &str) -> Option<RunningBundle> {
+        autoreleasepool(|_| {
+            let identifier = bundle_identifier_at(path)?;
+            let instances = unsafe {
+                NSRunningApplication::runningApplicationsWithBundleIdentifier(&NSString::from_str(
+                    &identifier,
+                ))
+            };
+            for i in 0..instances.len() {
+                let Some(app) = instances.get(i) else {
+                    continue;
+                };
+                let is_live_regular_app = !unsafe { app.isTerminated() }
+                    && unsafe { app.activationPolicy() } == NSApplicationActivationPolicy::Regular;
+                if !is_live_regular_app {
+                    continue;
+                }
+                if let Some(running_path) = super::recent_apps::path_for(app) {
+                    return Some(RunningBundle {
+                        identifier,
+                        running_path,
+                    });
+                }
+            }
+            None
+        })
+    }
+}
+
+fn open_with(args: &[&str]) -> Result<(), String> {
     Command::new("open")
-        .arg("-a")
-        .arg(path)
+        .args(args)
         .spawn()
         .map_err(|e| format!("Failed to launch app: {}", e))?;
     Ok(())
+}
+
+pub fn launch_or_focus_app(path: &str) -> Result<(), String> {
+    #[cfg(target_os = "macos")]
+    {
+        if let Some(running) = running_bundle::find_running_instance_of(path) {
+            recent_apps::record_path(&running.running_path);
+            return open_with(&["-b", &running.identifier]);
+        }
+        recent_apps::record_path(path);
+    }
+
+    open_with(&["-a", path])
 }
 
 fn home_dir() -> String {
