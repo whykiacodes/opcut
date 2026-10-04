@@ -147,6 +147,11 @@ pub fn switcher_cancel() {
 }
 
 #[tauri::command]
+pub fn quit_app(app_handle: tauri::AppHandle) {
+    app_handle.exit(0);
+}
+
+#[tauri::command]
 pub fn run_shell_command(
     app_handle: tauri::AppHandle,
     command: String,

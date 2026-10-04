@@ -13,6 +13,7 @@ import { fuzzySearch } from "./lib/fuzzy";
 import { joinIconPaths, splitIconPaths } from "./lib/iconPaths";
 import {
   launchOrFocusApp,
+  quitApp,
   runShellCommand,
   switcherCancel,
   switcherEnterSearch,
@@ -283,6 +284,14 @@ function App() {
           run: () => {
             toggleThreeFingerAppSwitcher();
             setQuery("");
+          },
+        },
+        {
+          id: "quit",
+          title: "Quit opcut",
+          subtitle: "Close opcut and remove it from the menu bar",
+          run: () => {
+            quitApp();
           },
         },
       ];

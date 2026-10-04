@@ -32,7 +32,7 @@ With nothing typed, the panel lists your quick slots. Press <kbd>⌫</kbd> on an
 
 | Keys                                   | Action                                                    |
 | -------------------------------------- | --------------------------------------------------------- |
-| <kbd>⌥ Space</kbd>                     | Show or hide opcut                                        |
+| <kbd>⌥ Space</kbd>                     | Show or hide opcut; clicking the menu bar icon does too   |
 | <kbd>⌥ Tab</kbd> / <kbd>⇧⌥ Tab</kbd>   | Cycle open apps; release <kbd>⌥</kbd> to switch           |
 | <kbd>⌥ 1</kbd> – <kbd>⌥ 9</kbd>        | Open the app in that quick slot                           |
 | <kbd>↩</kbd>                           | Open, focus, or run the selected row                      |
@@ -79,6 +79,7 @@ Shell mode needs Ghostty installed in `/Applications`.
 | `> shortcuts`                    | Turn <kbd>⌥ 1</kbd>–<kbd>⌥ 9</kbd> on or off       |
 | `> icons`                        | Show app icons or letters in results               |
 | `> gesture`                      | Turn the three-finger app switcher on or off       |
+| `> quit`                         | Quit opcut                                         |
 
 ## Install
 

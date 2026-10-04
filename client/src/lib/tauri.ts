@@ -47,3 +47,5 @@ export const getThreeFingerAppSwitcherEnabled = () =>
 
 export const setThreeFingerAppSwitcherEnabled = (enabled: boolean) =>
   invoke<boolean>("set_three_finger_app_switcher_enabled", { enabled });
+
+export const quitApp = () => invoke<void>("quit_app");

@@ -9,8 +9,7 @@ use config::{ShellConfig, SlotConfig};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use tauri::{
-    menu::{Menu, MenuItem},
-    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+    tray::{MouseButtonState, TrayIconBuilder, TrayIconEvent},
     ActivationPolicy, AppHandle, Emitter, Manager, PhysicalPosition,
 };
 use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut, ShortcutState};
@@ -300,6 +299,7 @@ pub fn run() {
             commands::set_three_finger_app_switcher_enabled,
             commands::switcher_enter_search,
             commands::switcher_cancel,
+            commands::quit_app,
         ])
         .setup(|app| {
             app.set_activation_policy(ActivationPolicy::Accessory);
@@ -307,24 +307,13 @@ pub fn run() {
             #[cfg(target_os = "macos")]
             app_manager::register_activation_observer();
 
-            let quit = MenuItem::with_id(app, "quit", "Quit opcut", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&quit])?;
-
             let _tray = TrayIconBuilder::new()
                 .icon(tauri::include_image!("./icons/tray-icon.png"))
                 .icon_as_template(true)
-                .menu(&menu)
-                .show_menu_on_left_click(false)
-                .on_menu_event(|app, event| {
-                    if event.id() == "quit" {
-                        app.exit(0);
-                    }
-                })
                 .on_tray_icon_event(|tray, event| {
                     if matches!(
                         event,
                         TrayIconEvent::Click {
-                            button: MouseButton::Left,
                             button_state: MouseButtonState::Up,
                             ..
                         }
