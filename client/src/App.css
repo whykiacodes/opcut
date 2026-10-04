@@ -50,6 +50,29 @@
   display: block;
 }
 
+.mode-token {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--media-badge);
+  height: var(--media-badge);
+  border-radius: 7px;
+  background: var(--glass-control);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-rim),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+  color: var(--text);
+  font: inherit;
+}
+.mode-token svg {
+  display: block;
+}
+.mode-token[data-hint="true"] {
+  background: var(--sel-bg);
+  color: var(--sel-text);
+}
+
 .search-input {
   flex: 1;
   min-width: 0;

@@ -30,7 +30,7 @@ import SettingsView from "./components/SettingsView";
 import RouteMenu from "./components/RouteMenu";
 import { OptionGlyph } from "./components/KeyGlyphs";
 import ModeGlyph from "./components/ModeGlyph";
-import { MODE_QUERIES } from "./lib/modePrefix";
+import { MODE_QUERIES, prefixedMode, stripModePrefix } from "./lib/modePrefix";
 import "./App.css";
 
 type View = "search" | "settings";
@@ -75,6 +75,10 @@ function optionTypedLetter(e: React.KeyboardEvent) {
   const match = /^Key([A-Z])$/.exec(e.code);
   if (!match) return null;
   return e.shiftKey ? match[1] : match[1].toLowerCase();
+}
+
+function isPlainBackspace(e: React.KeyboardEvent) {
+  return e.key === "Backspace" && !e.shiftKey && !e.altKey && !e.metaKey && !e.ctrlKey;
 }
 
 function isVerticalArrow(e: React.KeyboardEvent) {
@@ -580,6 +584,13 @@ function App() {
     if (view === "search") inputRef.current?.focus();
   }, [view, results]);
 
+  const mode = prefixedMode(parsed.kind);
+  const searchText = mode ? stripModePrefix(query) : query;
+  const changeSearchText = useCallback(
+    (text: string) => setQuery(mode ? MODE_QUERIES[mode] + text : text),
+    [mode],
+  );
+
   const handleSearchKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (switcherSession.phase === "cycling" && isSlashKey(e)) {
@@ -597,10 +608,15 @@ function App() {
         }
       }
       if (routeMenu.handleKeyDown(e)) return;
+      if (mode && searchText === "" && isPlainBackspace(e)) {
+        e.preventDefault();
+        setQuery("");
+        return;
+      }
       if (isVerticalArrow(e)) disarmHover();
       onKeyDown(e);
     },
-    [onKeyDown, changeSwitcherPhase, disarmHover, routeMenu],
+    [onKeyDown, changeSwitcherPhase, disarmHover, routeMenu, mode, searchText],
   );
 
   const lastWindowHeight = useRef(0);
@@ -638,7 +654,6 @@ function App() {
     );
   }
 
-  const shellActive = parsed.kind === "shell";
   const hasQuery = query.trim().length > 0;
   const modeName = MODE_NAMES[parsed.kind];
 
@@ -646,10 +661,11 @@ function App() {
     <div className="shell">
       <SearchBar
         ref={inputRef}
-        value={query}
-        onChange={setQuery}
+        value={searchText}
+        onChange={changeSearchText}
         onKeyDown={handleSearchKeyDown}
-        shellActive={shellActive}
+        mode={mode}
+        cyclingRunningApps={switcherPhase === "cycling"}
         menuOpen={routeMenu.open}
         onToggleMenu={routeMenu.toggle}
       />
