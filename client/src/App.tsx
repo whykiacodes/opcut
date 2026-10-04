@@ -29,6 +29,8 @@ import ResultList from "./components/ResultList";
 import SettingsView from "./components/SettingsView";
 import RouteMenu from "./components/RouteMenu";
 import { OptionGlyph } from "./components/KeyGlyphs";
+import ModeGlyph from "./components/ModeGlyph";
+import { MODE_QUERIES } from "./lib/modePrefix";
 import "./App.css";
 
 type View = "search" | "settings";
@@ -40,9 +42,7 @@ const TERMINATED_ROW_LINGER_MS = 1500;
 const KILL_FAILED_ROW_LINGER_MS = 2600;
 const COMMIT_RETRY_LIMIT = 30;
 const COMMIT_RETRY_DELAY_MS = 16;
-const RUNNING_APPS_QUERY = "/ ";
-const COMMAND_MENU_QUERY = "> ";
-const SHELL_QUERY = "! ";
+const RUNNING_APPS_QUERY = MODE_QUERIES["running-apps"];
 const ROUTE_PREFIX_GLYPH_SIZE = 15;
 
 const MODE_NAMES: Record<ParsedQuery["kind"], string> = {
@@ -402,24 +402,24 @@ function App() {
     () => [
       {
         id: "running-apps",
-        prefix: "/",
+        prefix: <ModeGlyph mode="running-apps" size={ROUTE_PREFIX_GLYPH_SIZE} />,
         label: "Open apps",
         caption: "Switch to a running app",
         onActivate: () => setQuery(RUNNING_APPS_QUERY),
       },
       {
         id: "commands",
-        prefix: ">",
+        prefix: <ModeGlyph mode="command-menu" size={ROUTE_PREFIX_GLYPH_SIZE} />,
         label: "Commands",
         caption: "Shell folder, icons, gestures",
-        onActivate: () => setQuery(COMMAND_MENU_QUERY),
+        onActivate: () => setQuery(MODE_QUERIES["command-menu"]),
       },
       {
         id: "shell",
-        prefix: "!",
+        prefix: <ModeGlyph mode="shell" size={ROUTE_PREFIX_GLYPH_SIZE} />,
         label: "Shell",
         caption: "Run a command in Terminal",
-        onActivate: () => setQuery(SHELL_QUERY),
+        onActivate: () => setQuery(MODE_QUERIES.shell),
       },
       {
         id: "quick-slots",
