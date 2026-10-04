@@ -288,8 +288,8 @@ function App() {
         },
         {
           id: "quit",
-          title: "Quit opcut",
-          subtitle: "Close opcut and remove it from the menu bar",
+          title: "Quit OpCut",
+          subtitle: "Close OpCut and remove it from the menu bar",
           run: () => {
             quitApp();
           },

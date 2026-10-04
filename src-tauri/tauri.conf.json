@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/nicedoc/tauri-schema/main/schema.json",
-  "productName": "opcut",
+  "productName": "OpCut",
   "identifier": "com.opcut.dev",
   "build": {
     "frontendDist": "../client/dist",
@@ -14,7 +14,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "opcut",
+        "title": "OpCut",
         "width": 612,
         "height": 60,
         "visible": false,

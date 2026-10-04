@@ -2,7 +2,7 @@
   <img src="logo.svg" width="110" />
 </p>
 
-<h1 align="center">opcut</h1>
+<h1 align="center">OpCut</h1>
 
 <p align="center">
   More cuts from your <kbd>⌥ Option</kbd> key.<br/>
@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/modes.svg" width="692" alt="The opcut panel showing quick slots, with the modes menu open" />
+  <img src="assets/modes.svg" width="692" alt="The OpCut panel showing quick slots, with the modes menu open" />
 </p>
 
 Press <kbd>⌥ Space</kbd> and start typing an app name. Lead with a prefix to switch modes, or pick one from the <kbd>⋯</kbd> button:
@@ -23,7 +23,7 @@ Press <kbd>⌥ Space</kbd> and start typing an app name. Lead with a prefix to s
 | Prefix | Mode      | What it does                                     |
 | ------ | --------- | ------------------------------------------------ |
 | `/`    | Open apps | Switch to a running app, or quit it              |
-| `>`    | Commands  | Change opcut's settings                          |
+| `>`    | Commands  | Change OpCut's settings                          |
 | `!`    | Shell     | Run a command in a new Ghostty window            |
 
 With nothing typed, the panel lists your quick slots. Press <kbd>⌫</kbd> on an empty mode to leave it.
@@ -32,7 +32,7 @@ With nothing typed, the panel lists your quick slots. Press <kbd>⌫</kbd> on an
 
 | Keys                                   | Action                                                    |
 | -------------------------------------- | --------------------------------------------------------- |
-| <kbd>⌥ Space</kbd>                     | Show or hide opcut; clicking the menu bar icon does too   |
+| <kbd>⌥ Space</kbd>                     | Show or hide OpCut; clicking the menu bar icon does too   |
 | <kbd>⌥ Tab</kbd> / <kbd>⇧⌥ Tab</kbd>   | Cycle open apps; release <kbd>⌥</kbd> to switch           |
 | <kbd>⌥ 1</kbd> – <kbd>⌥ 9</kbd>        | Open the app in that quick slot                           |
 | <kbd>↩</kbd>                           | Open, focus, or run the selected row                      |
@@ -53,7 +53,7 @@ The panel works over fullscreen apps and on every Space.
 
 ## Quick slots
 
-Pin up to nine apps and open them from anywhere with <kbd>⌥ 1</kbd> through <kbd>⌥ 9</kbd>. To assign a slot, choose **Quick slots** from the <kbd>⋯</kbd> menu, or press <kbd>⌥</kbd> and the slot number while opcut is open.
+Pin up to nine apps and open them from anywhere with <kbd>⌥ 1</kbd> through <kbd>⌥ 9</kbd>. To assign a slot, choose **Quick slots** from the <kbd>⋯</kbd> menu, or press <kbd>⌥</kbd> and the slot number while OpCut is open.
 
 If those shortcuts clash with another app, turn them off with `> Disable option shortcuts`.
 
@@ -79,7 +79,7 @@ Shell mode needs Ghostty installed in `/Applications`.
 | `> shortcuts`                    | Turn <kbd>⌥ 1</kbd>–<kbd>⌥ 9</kbd> on or off       |
 | `> icons`                        | Show app icons or letters in results               |
 | `> gesture`                      | Turn the three-finger app switcher on or off       |
-| `> quit`                         | Quit opcut                                         |
+| `> quit`                         | Quit OpCut                                         |
 
 ## Install
 
@@ -90,7 +90,7 @@ bun install
 bun run install:app
 ```
 
-`install:app` builds the app, replaces `/Applications/opcut.app`, and relaunches it. To build without installing, run `bun run tauri build`; the bundle lands in `src-tauri/target/release/bundle/macos/`.
+`install:app` builds the app, replaces `/Applications/OpCut.app`, and relaunches it. To build without installing, run `bun run tauri build`; the bundle lands in `src-tauri/target/release/bundle/macos/`.
 
 ## Development
 
