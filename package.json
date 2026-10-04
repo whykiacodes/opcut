@@ -8,6 +8,7 @@
     "dev:client": "vite",
     "build": "tsc -b && vite build",
     "tauri": "tauri",
+    "install:app": "./scripts/install.sh",
     "lint": "eslint .",
     "preview": "vite preview"
   },
