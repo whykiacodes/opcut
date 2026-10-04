@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { listen } from "@tauri-apps/api/event";
 import { LogicalSize } from "@tauri-apps/api/dpi";
-import type { AppInfo, ResultRow } from "./types";
+import type { AppInfo, ParsedQuery, ResultRow } from "./types";
 import { useAppData } from "./hooks/useAppData";
 import { useAppIcons } from "./hooks/useAppIcons";
 import { useKeyboardNav } from "./hooks/useKeyboardNav";
@@ -28,6 +28,7 @@ import SearchBar from "./components/SearchBar";
 import ResultList from "./components/ResultList";
 import SettingsView from "./components/SettingsView";
 import RouteMenu from "./components/RouteMenu";
+import { OptionGlyph } from "./components/KeyGlyphs";
 import "./App.css";
 
 type View = "search" | "settings";
@@ -42,6 +43,15 @@ const COMMIT_RETRY_DELAY_MS = 16;
 const RUNNING_APPS_QUERY = "/ ";
 const COMMAND_MENU_QUERY = "> ";
 const SHELL_QUERY = "! ";
+const ROUTE_PREFIX_GLYPH_SIZE = 15;
+
+const MODE_NAMES: Record<ParsedQuery["kind"], string> = {
+  empty: "Quick slots",
+  apps: "Apps",
+  "running-apps": "Open apps",
+  "command-menu": "Commands",
+  shell: "Shell",
+};
 
 function killTitle(status?: KillStatus) {
   if (status === "terminating") return "Terminating...";
@@ -170,8 +180,8 @@ function App() {
           {
             kind: "shell",
             id: "shell-hint",
-            title: "Run a shell command",
-            subtitle: `type a command · ${cwdLabel}`,
+            title: "Type a command to run",
+            subtitle: `Runs in ${cwdLabel}`,
             onActivate: () => {},
           },
         ];
@@ -181,7 +191,8 @@ function App() {
           kind: "shell",
           id: "shell-run",
           title: parsed.command,
-          subtitle: `run in terminal · ${cwdLabel}${parsed.cwdSource === "default" ? " (default)" : ""}`,
+          subtitle: `Runs in ${cwdLabel}${parsed.cwdSource === "default" ? ", your default folder" : ""}`,
+          actionLabel: "Run",
           onActivate: () =>
             runShellCommand(parsed.command, parsed.cwd).finally(hideAndReset),
         },
@@ -197,10 +208,11 @@ function App() {
             id: "cmd-cwd",
             title: pathArg
               ? `Set shell folder to ${pathArg}`
-              : `Shell folder · ${shellCwd.replace(home, "~")}`,
+              : `Shell folder is ${shellCwd.replace(home, "~")}`,
             subtitle: pathArg
-              ? "saved for every ! command · ↵ to confirm"
-              : "type a path after the command, e.g. > cwd ~/src",
+              ? "Every ! command will run here"
+              : "Type a path after the command, like > cwd ~/src",
+            actionLabel: pathArg ? "Save" : "Edit",
             onActivate: pathArg
               ? () => {
                   saveShellCwd(pathArg).finally(hideAndReset);
@@ -214,7 +226,7 @@ function App() {
         {
           id: "refresh",
           title: "Refresh app list",
-          subtitle: "re-scan for newly installed apps",
+          subtitle: "Find newly installed apps",
           run: () => {
             refreshApps();
             setQuery("");
@@ -223,13 +235,13 @@ function App() {
         {
           id: "cwd",
           title: "Set shell folder",
-          subtitle: `where ! commands run · now ${shellCwd.replace(home, "~")}`,
+          subtitle: `Where ! commands run, currently ${shellCwd.replace(home, "~")}`,
           run: () => setQuery(">cwd "),
         },
         {
           id: "slots",
           title: "Configure quick slots",
-          subtitle: "assign apps to ⌥1–9",
+          subtitle: "Pin apps to Option-1 through Option-9",
           run: () => setView("settings"),
         },
         {
@@ -238,8 +250,8 @@ function App() {
             ? "Disable option shortcuts"
             : "Enable option shortcuts",
           subtitle: slotShortcutsEnabled
-            ? "turn off the global ⌥1–9 quick-slot hotkeys"
-            : "turn on the global ⌥1–9 quick-slot hotkeys",
+            ? "Stop Option-1 through Option-9 from opening slots"
+            : "Let Option-1 through Option-9 open slots from anywhere",
           run: () => {
             toggleSlotShortcuts();
             setQuery("");
@@ -249,8 +261,8 @@ function App() {
           id: "icons",
           title: iconsEnabled ? "Hide app icons" : "Show app icons",
           subtitle: iconsEnabled
-            ? "show a letter mark instead of each app's icon"
-            : "show each app's real macOS icon in the results",
+            ? "Show a letter instead of each app's icon"
+            : "Show each app's macOS icon in results",
           run: () => {
             toggleIcons();
             setQuery("");
@@ -262,8 +274,8 @@ function App() {
             ? "Disable three-finger app switcher"
             : "Enable three-finger app switcher",
           subtitle: threeFingerAppSwitcherEnabled
-            ? "restore your previous macOS vertical swipe gestures"
-            : "three fingers opens * apps · macOS overview moves to four",
+            ? "Restore your previous macOS swipe gestures"
+            : "Three fingers opens apps; Mission Control moves to four",
           run: () => {
             toggleThreeFingerAppSwitcher();
             setQuery("");
@@ -281,6 +293,7 @@ function App() {
           id: `cmd-${c.id}`,
           title: c.title,
           subtitle: c.subtitle,
+          actionLabel: "Run",
           onActivate: c.run,
         }));
     }
@@ -293,6 +306,7 @@ function App() {
           title: m.item.name,
           iconBundlePath: m.item.path,
           matchIndicesInTitle: m.indices,
+          actionLabel: "Open",
           onActivate: () => launchOrFocusApp(m.item.path).finally(hideAndReset),
         }));
     }
@@ -317,6 +331,7 @@ function App() {
             subtitle: status ? m.item.name : undefined,
             matchIndicesInTitle: status ? undefined : m.indices,
             status,
+            actionLabel: "Focus",
             onActivate: status
               ? () => {}
               : () => launchOrFocusApp(m.item.path).finally(hideAndReset),
@@ -335,7 +350,8 @@ function App() {
         badge: String(i + 1),
         iconBundlePath: app.path,
         title: app.name,
-        subtitle: `⌥${i + 1}`,
+        subtitle: `Option-${i + 1}`,
+        actionLabel: "Open",
         onActivate: () => launchOrFocusApp(app.path).finally(hideAndReset),
       }));
   }, [
@@ -385,27 +401,31 @@ function App() {
   const routeMenuItems = useMemo(
     () => [
       {
-        keycap: "/",
+        id: "running-apps",
+        prefix: "/",
         label: "Open apps",
-        caption: "switch to a running app",
+        caption: "Switch to a running app",
         onActivate: () => setQuery(RUNNING_APPS_QUERY),
       },
       {
-        keycap: ">",
+        id: "commands",
+        prefix: ">",
         label: "Commands",
-        caption: "shell folder, icons, gestures",
+        caption: "Shell folder, icons, gestures",
         onActivate: () => setQuery(COMMAND_MENU_QUERY),
       },
       {
-        keycap: "!",
+        id: "shell",
+        prefix: "!",
         label: "Shell",
-        caption: "run a command in a terminal",
+        caption: "Run a command in Terminal",
         onActivate: () => setQuery(SHELL_QUERY),
       },
       {
-        keycap: "⌥",
+        id: "quick-slots",
+        prefix: <OptionGlyph size={ROUTE_PREFIX_GLYPH_SIZE} />,
         label: "Quick slots",
-        caption: "assign apps to ⌥1–9",
+        caption: "Pin apps to Option and a number",
         onActivate: () => setView("settings"),
       },
     ],
@@ -620,7 +640,7 @@ function App() {
 
   const shellActive = parsed.kind === "shell";
   const hasQuery = query.trim().length > 0;
-  const killHint = parsed.kind === "running-apps" && results.length > 0;
+  const modeName = MODE_NAMES[parsed.kind];
 
   return (
     <div className="shell">
@@ -651,7 +671,7 @@ function App() {
             iconsByBundlePath={iconsEnabled ? icons : {}}
             onHover={handleHover}
           />
-          <Footer count={results.length} killHint={killHint} />
+          <Footer mode={modeName} count={results.length} />
         </>
       )}
       {results.length === 0 && hasQuery && (
@@ -664,36 +684,18 @@ function App() {
                 ? "No matching open apps"
                 : "No results"}
           </div>
-          <Footer count={0} killHint={killHint} />
+          <Footer mode={modeName} count={0} />
         </>
       )}
     </div>
   );
 }
 
-function Footer({ count, killHint }: { count: number; killHint: boolean }) {
+function Footer({ mode, count }: { mode: string; count: number }) {
   return (
     <div className="footer">
-      <span className="footer-left">
-        {killHint ? (
-          <span className="footer-note">
-            <kbd className="kbd-kill">⇧⌫</kbd> asks the app to quit, like ⌘Q
-          </span>
-        ) : count > 0 ? (
-          `${count} result${count === 1 ? "" : "s"}`
-        ) : (
-          ""
-        )}
-      </span>
-      <span className="footer-keys">
-        <kbd>↑↓</kbd> navigate <kbd>↵</kbd> {killHint ? "focus" : "open"}{" "}
-        {killHint && (
-          <>
-            <kbd className="kbd-kill">⇧⌫</kbd> quit{" "}
-          </>
-        )}
-        <kbd>esc</kbd> dismiss
-      </span>
+      <span className="footer-mode">{mode}</span>
+      <span>{count === 1 ? "1 result" : `${count} results`}</span>
     </div>
   );
 }

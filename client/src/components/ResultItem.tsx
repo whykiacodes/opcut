@@ -3,10 +3,10 @@ import {
   IconAppWindow,
   IconCheck,
   IconChevronRight,
-  IconCornerDownLeft,
   IconTerminal2,
   IconX,
 } from "@tabler/icons-react";
+import { EnterGlyph, ShiftBackspaceGlyphs } from "./KeyGlyphs";
 
 interface ResultItemProps {
   row: ResultRow;
@@ -34,6 +34,39 @@ function KillStatusGlyph({ status }: { status: NonNullable<ResultRow["status"]> 
   if (status === "terminated") return <IconCheck size={10} strokeWidth={3} />;
   if (status === "failed") return <IconX size={10} strokeWidth={3} />;
   return null;
+}
+
+function QuitAction({ title, selected, onKill }: { title: string; selected: boolean; onKill: () => void }) {
+  return (
+    <button
+      className="row-action row-action-quit"
+      aria-label={`Quit ${title}`}
+      aria-hidden={!selected}
+      tabIndex={selected ? 0 : -1}
+      disabled={!selected}
+      title="Ask the app to quit, like Command-Q"
+      onMouseDown={(e) => e.preventDefault()}
+      onClick={(e) => {
+        e.stopPropagation();
+        onKill();
+      }}
+    >
+      <ShiftBackspaceGlyphs />
+      Quit
+    </button>
+  );
+}
+
+function SelectedRowActions({ row }: { row: ResultRow }) {
+  if (!row.actionLabel) return null;
+  return (
+    <>
+      <span className="row-action">
+        <EnterGlyph />
+        {row.actionLabel}
+      </span>
+    </>
+  );
 }
 
 function Media({ row, iconDataUri }: { row: ResultRow; iconDataUri?: string }) {
@@ -85,33 +118,31 @@ export default function ResultItem({
   onActivate,
 }: ResultItemProps) {
   return (
-    <button
+    <div
       className={`result-item ${selected ? "selected" : ""}`}
       data-kind={row.kind}
       data-status={row.status ?? ""}
       onMouseMove={onHover}
-      onClick={onActivate}
     >
-      <Media row={row} iconDataUri={iconDataUri} />
-      <span className="result-text">
-        <span className="result-title">
-          {highlightMatchedChars(row.title, row.matchIndicesInTitle)}
+      <button className="result-main" onClick={onActivate}>
+        <Media row={row} iconDataUri={iconDataUri} />
+        <span className="result-text">
+          <span className="result-title" aria-live={row.status ? "polite" : undefined}>
+            {highlightMatchedChars(row.title, row.matchIndicesInTitle)}
+          </span>
+          {row.subtitle && <span className="result-subtitle">{row.subtitle}</span>}
         </span>
-        {row.subtitle && <span className="result-subtitle">{row.subtitle}</span>}
-      </span>
-      <span className="result-enter">
-        {row.status ? (
-          <span className="kill-orb" data-status={row.status} aria-hidden>
-            <KillStatusGlyph status={row.status} />
-          </span>
-        ) : selected && row.onKill ? (
-          <span className="kill-hint">
-            <kbd>⇧⌫</kbd>
-          </span>
-        ) : selected ? (
-          <IconCornerDownLeft size={15} strokeWidth={1.75} aria-hidden />
-        ) : null}
-      </span>
-    </button>
+        <span className="result-actions">
+          {row.status ? (
+            <span className="kill-orb" data-status={row.status} aria-hidden>
+              <KillStatusGlyph status={row.status} />
+            </span>
+          ) : selected ? (
+            <SelectedRowActions row={row} />
+          ) : null}
+        </span>
+      </button>
+      {row.onKill && <QuitAction title={row.title} selected={selected} onKill={row.onKill} />}
+    </div>
   );
 }

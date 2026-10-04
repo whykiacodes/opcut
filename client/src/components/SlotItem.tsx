@@ -12,6 +12,7 @@ export default function SlotItem({ index, app, iconDataUri, onClick }: SlotItemP
   return (
     <button
       className={`slot-item ${app ? "assigned" : "empty"}`}
+      aria-label={`Slot ${index + 1}: ${app ? app.name : "Choose an app"}`}
       onClick={onClick}
     >
       <span className="slot-number">{index + 1}</span>
@@ -22,8 +23,7 @@ export default function SlotItem({ index, app, iconDataUri, onClick }: SlotItemP
           <IconAppWindow size={14} strokeWidth={1.75} aria-hidden />
         )}
       </span>
-      <span className="slot-app-name">{app ? app.name : "Assign app..."}</span>
-      <span className="slot-shortcut">&#x2325;{index + 1}</span>
+      <span className="slot-app-name">{app ? app.name : "Choose an app"}</span>
     </button>
   );
 }

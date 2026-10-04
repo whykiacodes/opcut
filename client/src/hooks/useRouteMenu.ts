@@ -1,7 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 
 export interface RouteMenuItem {
-  keycap: string;
+  id: string;
+  prefix: ReactNode;
   label: string;
   caption: string;
   onActivate: () => void;

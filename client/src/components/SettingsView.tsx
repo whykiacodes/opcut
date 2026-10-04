@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import type { AppConfig, AppInfo } from "../types";
 import { setSlotConfig } from "../lib/tauri";
-import { IconX } from "@tabler/icons-react";
 import AppPicker from "./AppPicker";
+import { OptionGlyph } from "./KeyGlyphs";
 import SlotGrid from "./SlotGrid";
 
 interface SettingsViewProps {
@@ -50,15 +50,19 @@ export default function SettingsView({
   return (
     <div className="settings-view">
       <div className="settings-header">
-        <span className="settings-title">Quick slots</span>
-        <span className="settings-hint">press ⌥1–9 to assign · ⌘⌫ clears</span>
+        <div className="settings-heading">
+          <h1 className="settings-title">Quick slots</h1>
+          <span className="settings-hint">
+            Choose a slot to assign an app. Launch with <OptionGlyph /> and its number.
+          </span>
+        </div>
         <button
           className="settings-done"
           onClick={onClose}
           aria-label="Close settings"
           title="Close (esc)"
         >
-          <IconX size={14} strokeWidth={2} aria-hidden />
+          Done
         </button>
       </div>
       <SlotGrid

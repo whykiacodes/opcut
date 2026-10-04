@@ -27,7 +27,7 @@ export default function RouteMenu({
       <div className="route-menu" role="menu">
         {items.map((item, i) => (
           <button
-            key={item.keycap}
+            key={item.id}
             className="route-menu-item"
             role="menuitem"
             data-selected={i === selected}
@@ -36,7 +36,9 @@ export default function RouteMenu({
             }}
             onClick={() => onActivate(i)}
           >
-            <span className="route-keycap">{item.keycap}</span>
+            <span className="route-prefix" aria-hidden>
+              {item.prefix}
+            </span>
             <span className="route-menu-text">
               <span className="route-menu-label">{item.label}</span>
               <span className="route-menu-caption">{item.caption}</span>

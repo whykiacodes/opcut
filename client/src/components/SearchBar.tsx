@@ -28,18 +28,21 @@ const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
           spellCheck={false}
           autoComplete="off"
           autoCapitalize="off"
-          placeholder="Search · / open · > commands · ! shell"
+          aria-label={shellActive ? "Shell command" : "Search apps or commands"}
+          placeholder="Search apps or enter a command"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={onKeyDown}
         />
         <button
           className="settings-btn"
-          title="Show modes"
+          title="Modes"
+          aria-label="Choose a mode"
           aria-haspopup="menu"
           aria-expanded={menuOpen}
           data-open={menuOpen}
           tabIndex={-1}
+          onMouseDown={(e) => e.preventDefault()}
           onClick={onToggleMenu}
         >
           <IconDots size={16} strokeWidth={2} aria-hidden />

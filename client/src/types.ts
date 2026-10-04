@@ -23,6 +23,7 @@ export interface ResultRow {
   badge?: string;
   iconBundlePath?: string;
   status?: "terminating" | "terminated" | "failed";
+  actionLabel?: string;
   onActivate: () => void | Promise<void>;
   onKill?: () => void | Promise<void>;
 }
