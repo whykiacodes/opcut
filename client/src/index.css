@@ -1,85 +1,118 @@
-@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&display=swap");
-
 :root {
-    --font-display:
-        "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, system-ui,
-        sans-serif;
-    --font-mono:
-        ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+  color-scheme: dark;
 
-    --panel: rgba(16, 16, 19, 0.84);
-    --panel-edge: rgba(255, 255, 255, 0.14);
-    --panel-edge-top: rgba(255, 255, 255, 0.2);
-    --hairline: rgba(255, 255, 255, 0.09);
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  --font-code: ui-monospace, "SF Mono", Menlo, monospace;
 
-    --band-top: rgba(255, 255, 255, 0.04);
-    --band-bottom: rgba(0, 0, 0, 0.2);
-    --fill: rgba(255, 255, 255, 0.07);
-    --fill-edge: rgba(255, 255, 255, 0.09);
+  --accent: #8bbcff;
+  --glass: rgba(25, 25, 31, 0.58);
+  --glass-popover: rgba(38, 38, 44, 0.9);
+  --glass-rim: rgba(255, 255, 255, 0.15);
+  --glass-highlight: rgba(255, 255, 255, 0.09);
+  --glass-shadow: rgba(0, 0, 0, 0.24);
+  --glass-control: rgba(255, 255, 255, 0.055);
+  --motion-reveal: 140ms;
+  --motion-control: 180ms;
+  --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
 
-    --text: rgba(246, 246, 248, 0.97);
-    --text-dim: rgba(236, 236, 242, 0.58);
-    --text-faint: rgba(236, 236, 242, 0.34);
+  --sel-bg: #354459;
+  --sel-text: #f5f7fb;
+  --sel-text-dim: #c0cfe3;
+  --sel-fill: rgba(255, 255, 255, 0.08);
+  --gutter: 20px;
+  --separator: rgba(255, 255, 255, 0.08);
+  --fill: rgba(255, 255, 255, 0.06);
+  --fill-hover: rgba(255, 255, 255, 0.06);
+  --input-bg: #222225;
+  --overlay: rgba(12, 12, 14, 0.48);
 
-    --accent: #f6f6f8;
-    --accent-rgb: 246, 246, 248;
-    --sel-bg: rgba(var(--accent-rgb), 0.1);
-    --sel-edge: rgba(var(--accent-rgb), 0.22);
+  --text: #f2f2f5;
+  --text-dim: #b5b5bd;
+  --text-faint: #9b9ba5;
 
-    --live: #6ee7a8;
-    --live-rgb: 110, 231, 168;
-    --kill: #ff8a8a;
-    --kill-rgb: 255, 138, 138;
+  --live: #72d98d;
+  --kill: #ff857c;
+  --kill-fill: #9d3434;
 
-    --radius-panel: 14px;
-    --radius-row: 9px;
+  --radius-panel: 20px;
+  --radius-row: 8px;
+  --radius-popover: 12px;
+  --radius-popover-row: 6px;
 
-    --media: 28px;
-    --media-badge: 26px;
-    --media-glyph: 16px;
-
-    --media-compact: 22px;
-    --media-glyph-compact: 14px;
+  --media: 28px;
+  --media-badge: 26px;
+  --media-glyph: 16px;
+  --media-compact: 22px;
+  --media-glyph-compact: 14px;
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 html,
 body {
-    background: transparent;
-    font-family: var(--font-display);
-    font-size: 13px;
-    color: var(--text);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    user-select: none;
-    cursor: default;
-    overflow: hidden;
+  background: transparent;
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  cursor: default;
+  overflow: hidden;
 }
 
 #root {
-    width: 100%;
-    height: 100vh;
-    background: transparent;
+  width: 100%;
+  height: 100vh;
+  background: transparent;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--sel-bg);
+  color: var(--sel-text);
 }
 
 ::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
+
 ::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.16);
-    border-radius: 4px;
-    border: 2px solid transparent;
-    background-clip: content-box;
+  background: var(--text-faint);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.28);
-    background-clip: content-box;
+  background: var(--text-dim);
+  background-clip: content-box;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass: #232326;
+    --glass-popover: #2c2c2f;
+  }
 }

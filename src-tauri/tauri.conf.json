@@ -15,12 +15,18 @@
       {
         "label": "main",
         "title": "opcut",
-        "width": 640,
-        "height": 88,
+        "width": 612,
+        "height": 60,
         "visible": false,
         "decorations": false,
         "transparent": true,
-        "shadow": false,
+        "shadow": true,
+        "theme": "Dark",
+        "windowEffects": {
+          "effects": ["hudWindow"],
+          "state": "active",
+          "radius": 20
+        },
         "alwaysOnTop": true,
         "resizable": false,
         "skipTaskbar": true

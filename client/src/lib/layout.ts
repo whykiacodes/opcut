@@ -1,12 +1,11 @@
-export const WIN_W = 640;
-export const SHADOW_GUTTER_PX = 14;
+export const WIN_W = 612;
 export const SEARCH_ROW_PX = 60;
 export const RESULT_ROW_PX = 52;
 export const LIST_VERTICAL_PADDING_PX = 8;
 export const FOOTER_PX = 34;
 export const EMPTY_STATE_ROW_PX = 52;
 export const MAX_VISIBLE_ROWS = 8;
-export const SETTINGS_HEADER_PX = 44;
+export const SETTINGS_HEADER_PX = 68;
 export const SLOT_ROW_PX = 44;
 export const SLOT_COUNT = 9;
 
@@ -17,7 +16,6 @@ export const ROUTE_MENU_BOTTOM_GAP_PX = 12;
 
 export function routeMenuWindowHeight(itemCount: number): number {
   return (
-    SHADOW_GUTTER_PX * 2 +
     SEARCH_ROW_PX +
     ROUTE_MENU_TOP_GAP_PX +
     ROUTE_MENU_PADDING_PX * 2 +
@@ -40,12 +38,11 @@ export function panelHeight(rowCount: number, hasQuery: boolean): number {
 }
 
 export function windowHeight(rowCount: number, hasQuery: boolean): number {
-  return panelHeight(rowCount, hasQuery) + SHADOW_GUTTER_PX * 2;
+  return panelHeight(rowCount, hasQuery);
 }
 
 export function settingsWindowHeight(): number {
   return (
-    SHADOW_GUTTER_PX * 2 +
     SETTINGS_HEADER_PX +
     LIST_VERTICAL_PADDING_PX * 2 +
     SLOT_COUNT * SLOT_ROW_PX
